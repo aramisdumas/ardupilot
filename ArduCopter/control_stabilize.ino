@@ -11,9 +11,9 @@ static bool stabilize_init(bool ignore_checks)
   // set target altitude to zero for reporting
   // To-Do: make pos controller aware when it's active/inactive so it can always report the altitude error?
   pos_control.set_alt_target(0);
+  
+  // Enable channel
 
-  // Enable channel 8
-  hal.rcout->enable_ch(CH_8);
   // stabilize should never be made to fail
   return true;
 }
@@ -34,11 +34,9 @@ static void stabilize_run()
     return;
   }
   // Test code
-  if (true){
-    //hal.console->println("test");
-    // Test write a value to CH_8
-    hal.rcout->write(CH_8, 1500);
-    }
+    g.rc_8.servo_out = g.rc_1.control_in;
+    g.rc_8.calc_pwm();
+    g.rc_8.output();
 
     // apply SIMPLE mode transform to pilot inputs
     update_simple_mode();
