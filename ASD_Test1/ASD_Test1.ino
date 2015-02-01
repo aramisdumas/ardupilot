@@ -47,7 +47,7 @@
 
 const AP_HAL::HAL& hal = AP_HAL_BOARD_DRIVER;
 
-#define NUM_CHANNELS 1
+#define NUM_CHANNELS 2
 
 static RC_Channel rc_1(CH_1);
 static RC_Channel rc_2(CH_2);
