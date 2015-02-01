@@ -1,7 +1,8 @@
 /*
- *       Example of RC_Channel library.
- *       Based on original sketch by Jason Short. 2010
+ *       Proof of concept created by Arthur Lee
+ *       2/1/2015
  */
+
 #define CH_1 0
 #define CH_2 1
 #define CH_3 2
@@ -47,7 +48,8 @@
 
 const AP_HAL::HAL& hal = AP_HAL_BOARD_DRIVER;
 
-#define NUM_CHANNELS 2
+// Input channels
+#define MAX_CHANNELS 4
 
 static RC_Channel rc_1(CH_1);
 static RC_Channel rc_2(CH_2);
@@ -58,81 +60,69 @@ static RC_Channel rc_6(CH_6);
 static RC_Channel rc_7(CH_7);
 static RC_Channel rc_8(CH_8);
 static RC_Channel *rc = &rc_1;
-
+static uint16_t v[MAX_CHANNELS];
 
 void setup()
 {
-    hal.console->println("ArduPilot RC Channel test");
+  hal.console->printf("ASD T1 RC Channel test\n");
+  // Enable channels outputs: 1 to 8
+  // set type of output, symmetrical angles or a number range;
+  rc_1.set_angle(4500);
+  rc_1.set_default_dead_zone(80);
+  rc_1.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
 
-    print_radio_values();
+  rc_2.set_angle(4500);
+  rc_2.set_default_dead_zone(80);
+  rc_2.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
 
-    // set type of output, symmetrical angles or a number range;
-    rc_1.set_angle(4500);
-    rc_1.set_default_dead_zone(80);
-    rc_1.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+  rc_3.set_range(0,1000);
+  rc_3.set_default_dead_zone(20);
 
-    rc_2.set_angle(4500);
-    rc_2.set_default_dead_zone(80);
-    rc_2.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+  rc_4.set_angle(6000);
+  rc_4.set_default_dead_zone(500);
+  rc_4.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
 
-    rc_3.set_range(0,1000);
-    rc_3.set_default_dead_zone(20);
+  rc_5.set_range(0,1000);
+  rc_6.set_range(200,800);
 
-    rc_4.set_angle(6000);
-    rc_4.set_default_dead_zone(500);
-    rc_4.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+  rc_7.set_range(0,1000);
 
-    rc_5.set_range(0,1000);
-    rc_6.set_range(200,800);
-
-    rc_7.set_range(0,1000);
-
-    rc_8.set_range(0,1000);
-    for (int i=0; i<NUM_CHANNELS; i++) {
-        rc[i].enable_out();
-    }
+  rc_8.set_range(0,1000);
+  for (int i=0; i<MAX_CHANNELS; i++) {
+    rc[i].enable_out();
+  }
 }
 
 void loop()
 {
-    RC_Channel::set_pwm_all();
-    print_pwm();
-    
-    copy_input_output();
-
-    hal.scheduler->delay(20);
+  // Read PWM
+  RC_Channel::set_pwm_all();
+  // Pass through
+  for (int i=0; i<MAX_CHANNELS; i++) {
+    v[i]=rc[i].control_in;
+  }
+  output();
+  hal.scheduler->delay(20);
 }
 
-static void print_pwm(void)
-{
-    for (int i=0; i<NUM_CHANNELS; i++) {
-	    hal.console->printf("ch%u: %4d ", (unsigned)i+1, (int)rc[i].control_in);
-    }
-    hal.console->printf("\n");
-}
-
-
-static void print_radio_values()
-{
-    for (int i=0; i<NUM_CHANNELS; i++) {
-	     hal.console->printf("CH%u: %u|%u\n",
-			  (unsigned)i+1, 
-			  (unsigned)rc[i].radio_min, 
-			  (unsigned)rc[i].radio_max); 
-    }
-}
-
-
-/*
-  copy scaled input to output
- */
-static void copy_input_output(void)
-{
-    for (int i=0; i<NUM_CHANNELS; i++) {
-        rc[i].servo_out = rc[i].control_in;
-        rc[i].calc_pwm();
-        rc[i].output();
-    }
+static void output(void){
+  for (int i=0; i<MAX_CHANNELS; i++) {
+//    hal.console->printf("CH%u: %4d ",
+//     (unsigned)i+1,(unsigned)v[i]);
+//     hal.console->println();
+    rc[i].servo_out = v[i];
+    rc[i].calc_pwm();
+    rc[i].output();
+  }
 }
 
 AP_HAL_MAIN();
+
+
+
+
+
+
+
+
+
