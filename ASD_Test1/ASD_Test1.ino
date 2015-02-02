@@ -61,8 +61,7 @@ static RC_Channel rc_7(CH_7);
 static RC_Channel rc_8(CH_8);
 static RC_Channel *rc[NUM_CHANNELS];
 static uint16_t val[NUM_CHANNELS];
-// Mode flag true for vertical, false for horizontal
-static bool mode;
+
 void setup()
 {
   hal.console->printf("ASD T1 RC Channel test\n");
@@ -89,21 +88,6 @@ void setup()
 
   rc[CH_4]->set_range(0,1000);
   rc[CH_4]->set_default_dead_zone(20);
-  //  // set type of output, symmetrical angles or a number range;
-  //  rc[CH_1]->set_angle(4500);
-  //  rc[CH_1]->set_default_dead_zone(80);
-  //  rc[CH_1]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  //
-  //  rc[CH_2]->set_angle(4500);
-  //  rc[CH_2]->set_default_dead_zone(80);
-  //  rc[CH_2]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  //
-  //  rc[CH_3]->set_range(0,1000);
-  //  rc[CH_3]->set_default_dead_zone(20);
-  //
-  //  rc[CH_4]->set_angle(6000);
-  //  rc[CH_4]->set_default_dead_zone(80);
-  //  rc[CH_4]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
   rc[CH_5]->set_angle(4500);
   rc[CH_5]->set_default_dead_zone(80);
   rc[CH_5]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
@@ -117,23 +101,12 @@ void setup()
   for (int i=0; i<NUM_CHANNELS; i++) {
     rc[i]->enable_out();
   }
-  if((unsigned) rc[CH_8]->control_in>750)
-  {
-    mode = false;
-  } 
-  else {
-    mode = true;
-  }
 }
 
 void loop()
 {
   // Read PWM
   RC_Channel::set_pwm_all();
-  //  // Store PWM values for pitch, roll, and yaw
-  //  val[CH_1]=rc[CH_1]->control_in;
-  //  val[CH_2]=rc[CH_2]->control_in;
-  //  val[CH_4]=rc[CH_4]->control_in;
   // Display input
   hal.console->printf("C IN: ");
   for (int i=0; i<NUM_CHANNELS; i++) {
@@ -153,10 +126,6 @@ void loop()
   // Change operating mode based on tilt servo position
   if((unsigned) rc[CH_8]->control_in>750){
     // 8 pulled high: vertical mode
-    if (mode){
-      setup_vert();
-      mode = false;
-    }
     // Read PWM
     RC_Channel::set_pwm_all();
     // Pass through
@@ -184,39 +153,28 @@ void loop()
   }
   else{
     // 8 low: horizontal mode
-    if (!mode){
-      setup_hori();
-      mode = true;
-    }
 
     // Setup channel type for input
     rc[CH_1]->set_angle(4500);
     rc[CH_1]->set_default_dead_zone(80);
     rc[CH_1]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-
     rc[CH_2]->set_angle(4500);
     rc[CH_2]->set_default_dead_zone(80);
     rc[CH_2]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-
     rc[CH_3]->set_range(0,1000);
     rc[CH_3]->set_default_dead_zone(20);
-
     rc[CH_4]->set_angle(6000);
     rc[CH_4]->set_default_dead_zone(80);
     rc[CH_4]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
     // Read PWM
     RC_Channel::set_pwm_all();
     // Setup channel type for output
-    // Setup channel type for output
     rc[CH_1]->set_range(0,1000);
     rc[CH_1]->set_default_dead_zone(20);
-
     rc[CH_2]->set_range(0,1000);
     rc[CH_2]->set_default_dead_zone(20);
-
     rc[CH_3]->set_range(0,1000);
     rc[CH_3]->set_default_dead_zone(20);
-
     rc[CH_4]->set_range(0,1000);
     rc[CH_4]->set_default_dead_zone(20);
     // Slave motors together
@@ -251,7 +209,7 @@ void loop()
     rc[CH_8]->output();
   }
 
-
+// Debug
   hal.console->printf("S OUT: ");
   for (int i=0; i<NUM_CHANNELS; i++) {
     hal.console->printf("CH%u: %u| ",
@@ -266,45 +224,7 @@ void loop()
     rc[i]->radio_out);
   }
   hal.console->println();
-  hal.scheduler->delay(500);
-}
 
-static void setup_hori()
-{
-  //  // Setup channel type for output
-  //  rc[CH_1]->set_angle(4500);
-  //  rc[CH_1]->set_default_dead_zone(80);
-  //  rc[CH_1]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  //
-  //  rc[CH_2]->set_angle(4500);
-  //  rc[CH_2]->set_default_dead_zone(80);
-  //  rc[CH_2]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  //
-  //  rc[CH_3]->set_range(0,1000);
-  //  rc[CH_3]->set_default_dead_zone(20);
-  //
-  //  rc[CH_4]->set_angle(6000);
-  //  rc[CH_4]->set_default_dead_zone(80);
-  //  rc[CH_4]->set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  //  hal.console->printf("Setup Hori\n");
-}
-
-static void setup_vert()
-{
-
-  //  // Setup channel type for output
-  //  rc[CH_1]->set_range(0,1000);
-  //  rc[CH_1]->set_default_dead_zone(20);
-  //
-  //  rc[CH_2]->set_range(0,1000);
-  //  rc[CH_2]->set_default_dead_zone(20);
-  //
-  //  rc[CH_3]->set_range(0,1000);
-  //  rc[CH_3]->set_default_dead_zone(20);
-  //
-  //  rc[CH_4]->set_range(0,1000);
-  //  rc[CH_4]->set_default_dead_zone(20);
-  //    hal.console->printf("Setup Vert\n");
 }
 
 AP_HAL_MAIN();
