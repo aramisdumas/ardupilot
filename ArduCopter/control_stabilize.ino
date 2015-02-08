@@ -109,43 +109,43 @@ static void stabilize_run()
     g.rc_6.output();
     g.rc_7.output();
 
-    // Failsafe (maybe) still have motor control with no smoothing if motors becomes disarmed
-    if(!motors.armed()) {
-      // Setup channel type for output
-      g.rc_1.set_range(g.throttle_min, g.throttle_max);
-      g.rc_1.set_default_dead_zone(30);
-      g.rc_2.set_range(g.throttle_min, g.throttle_max);
-      g.rc_2.set_default_dead_zone(30);
-      g.rc_4.set_range(g.throttle_min, g.throttle_max);
-      g.rc_4.set_default_dead_zone(30);
-      // Assign value to motor channels
-      g.rc_1.servo_out = g.rc_3.control_in;
-      g.rc_2.servo_out = g.rc_3.control_in;
-      g.rc_3.servo_out = g.rc_3.control_in;
-      g.rc_4.servo_out = g.rc_3.control_in;
-      g.rc_1.calc_pwm();
-      g.rc_2.calc_pwm();
-      g.rc_3.calc_pwm();
-      g.rc_4.calc_pwm();
-      // Setup channel type back
-      g.rc_1.set_angle(ROLL_PITCH_INPUT_MAX);
-      g.rc_1.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-      g.rc_1.set_default_dead_zone(30);
-      g.rc_2.set_angle(ROLL_PITCH_INPUT_MAX);
-      g.rc_2.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-      g.rc_2.set_default_dead_zone(30);
-      g.rc_4.set_angle(4500);
-      g.rc_4.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-      g.rc_4.set_default_dead_zone(40);
-      // Output to motors
-      g.rc_1.output();
-      g.rc_3.output();
-      g.rc_2.output();
-      g.rc_4.output();
-    }
-    else{
-
-    }
+//    // Failsafe (maybe) still have motor control with no smoothing if motors becomes disarmed
+//    if(!motors.armed()) {
+//      // Setup channel type for output
+//      g.rc_1.set_range(g.throttle_min, g.throttle_max);
+//      g.rc_1.set_default_dead_zone(30);
+//      g.rc_2.set_range(g.throttle_min, g.throttle_max);
+//      g.rc_2.set_default_dead_zone(30);
+//      g.rc_4.set_range(g.throttle_min, g.throttle_max);
+//      g.rc_4.set_default_dead_zone(30);
+//      // Assign value to motor channels
+//      g.rc_1.servo_out = g.rc_3.control_in;
+//      g.rc_2.servo_out = g.rc_3.control_in;
+//      g.rc_3.servo_out = g.rc_3.control_in;
+//      g.rc_4.servo_out = g.rc_3.control_in;
+//      g.rc_1.calc_pwm();
+//      g.rc_2.calc_pwm();
+//      g.rc_3.calc_pwm();
+//      g.rc_4.calc_pwm();
+//      // Setup channel type back
+//      g.rc_1.set_angle(ROLL_PITCH_INPUT_MAX);
+//      g.rc_1.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+//      g.rc_1.set_default_dead_zone(30);
+//      g.rc_2.set_angle(ROLL_PITCH_INPUT_MAX);
+//      g.rc_2.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+//      g.rc_2.set_default_dead_zone(30);
+//      g.rc_4.set_angle(4500);
+//      g.rc_4.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+//      g.rc_4.set_default_dead_zone(40);
+//      // Output to motors
+//      g.rc_1.output();
+//      g.rc_3.output();
+//      g.rc_2.output();
+//      g.rc_4.output();
+//    }
+//    else{
+//
+//    }
     attitude_control.angle_ef_roll_pitch_rate_ef_yaw_smooth(0, 0, 0, get_smoothing_gain());
     // get pilot's desired throttle
     pilot_throttle_scaled = get_pilot_desired_throttle(g.rc_3.control_in);

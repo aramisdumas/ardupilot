@@ -13,7 +13,12 @@ int                 WiiRotation=0;
 int                 WiiDisplacementX=0;
 int                 WiiDisplacementY=0;
 #endif  // WII_CAMERA
-
+// Data Packet
+struct PACKED log_DataCount {
+    LOG_PACKET_HEADER;
+    uint32_t time_ms;
+    int16_t data_count;
+};
 #endif  // USERHOOK_VARIABLES
 
 
