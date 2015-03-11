@@ -108,11 +108,8 @@ static void stabilize_run()
     g.rc_5.output();
     g.rc_6.output();
     g.rc_7.output();
-    attitude_control.angle_ef_roll_pitch_rate_ef_yaw_smooth(0, 0, 0, get_smoothing_gain());
-    // get pilot's desired throttle
-    pilot_throttle_scaled = get_pilot_desired_throttle(g.rc_3.control_in);
     // output pilot's throttle
-    attitude_control.set_throttle_out(pilot_throttle_scaled, true);
+    motors.throttle_pass_through();
   }
   // Pass through tilt servo on CH_8
   g.rc_8.servo_out = g.rc_8.control_in;

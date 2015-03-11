@@ -30,10 +30,13 @@ static void init_rc_in()
     g.rc_2.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
     g.rc_4.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
 
-    //set auxiliary servo ranges
-    g.rc_5.set_range(0,1000);
-    g.rc_6.set_range(0,1000);
-    g.rc_7.set_range(0,1000);
+    //set auxiliary servo 
+	g.rc_5.set_angle(ROLL_PITCH_INPUT_MAX);
+    g.rc_5.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+	g.rc_6.set_angle(ROLL_PITCH_INPUT_MAX);
+    g.rc_6.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+	g.rc_7.set_angle(4500);
+    g.rc_7.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
     g.rc_8.set_range(0,1000);
 
     // set default dead zones
