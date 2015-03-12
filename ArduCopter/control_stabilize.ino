@@ -23,13 +23,17 @@ static bool stabilize_init(bool ignore_checks)
   trim[ele] = g.rc_2.radio_trim;
   trim[rud] = g.rc_4.radio_trim;
   // set aileron, elevator, and rudder to radio trim positions
+  g.rc_5.control_in = trim[ail];
   g.rc_5.servo_out = trim[ail];
+  g.rc_5.radio_trim = trim[ail];
   g.rc_5.calc_pwm();
   g.rc_5.output();
   g.rc_6.servo_out = trim[ele];
+  g.rc_6.radio_trim = trim[ele];
   g.rc_6.calc_pwm();
   g.rc_6.output();
   g.rc_7.servo_out = trim[rud];
+  g.rc_7.radio_trim = trim[rud];
   g.rc_7.calc_pwm();
   g.rc_7.output();
 
@@ -45,21 +49,11 @@ static void stabilize_run()
   int16_t target_roll, target_pitch;
   float target_yaw_rate;
   int16_t pilot_throttle_scaled;
-  //  // Setup channels, strange that it needs to be run constantly but it does
-  //  g.rc_5.set_angle(4500);
-  //  g.rc_5.set_default_dead_zone(80);
-  //  g.rc_5.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  //  g.rc_6.set_angle(4500);
-  //  g.rc_6.set_default_dead_zone(80);
-  //  g.rc_6.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  //  g.rc_7.set_angle(4500);
-  //  g.rc_7.set_default_dead_zone(80);
-  //  g.rc_7.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
 
   // Check tilt servo input
   if(g.rc_8.control_in>=800){
     // if not armed set throttle to zero and exit immediately
-    if(!motors.armed() || g.rc_3.control_in <= 0) {
+    if(!motors.armed()) {
       attitude_control.relax_bf_rate_controller();
       attitude_control.set_yaw_target_to_current_heading();
       attitude_control.set_throttle_out(0, false);
@@ -133,6 +127,7 @@ static void stabilize_run()
     loop_count++;
   }
 }
+
 
 
 

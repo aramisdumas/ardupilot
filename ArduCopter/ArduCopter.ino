@@ -1018,7 +1018,7 @@ static void rc_loop()
     // Read radio and 3-position switch on radio
     // -----------------------------------------
     read_radio();
-    read_control_switch();
+    //read_control_switch();
 }
 
 // throttle_loop - should be run at 50 hz
