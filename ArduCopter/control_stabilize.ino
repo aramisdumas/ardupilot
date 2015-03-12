@@ -6,8 +6,11 @@
 #define ail 0
 #define ele 1
 #define rud 2
+// How many iterations at 100hz before the servos are moved
+#define refresh 2
 // Value to store trim
 static uint16_t trim[3];
+static uint8_t loop_count;
 
 // stabilize_init - initialise stabilize controller
 static bool stabilize_init(bool ignore_checks)
@@ -30,6 +33,7 @@ static bool stabilize_init(bool ignore_checks)
   g.rc_7.calc_pwm();
   g.rc_7.output();
 
+  loop_count = 1;
   // stabilize should never be made to fail
   return true;
 }
@@ -41,16 +45,16 @@ static void stabilize_run()
   int16_t target_roll, target_pitch;
   float target_yaw_rate;
   int16_t pilot_throttle_scaled;
-  // Setup channels, strange that it needs to be run constantly but it does
-  g.rc_5.set_angle(4500);
-  g.rc_5.set_default_dead_zone(80);
-  g.rc_5.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  g.rc_6.set_angle(4500);
-  g.rc_6.set_default_dead_zone(80);
-  g.rc_6.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
-  g.rc_7.set_angle(4500);
-  g.rc_7.set_default_dead_zone(80);
-  g.rc_7.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+  //  // Setup channels, strange that it needs to be run constantly but it does
+  //  g.rc_5.set_angle(4500);
+  //  g.rc_5.set_default_dead_zone(80);
+  //  g.rc_5.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+  //  g.rc_6.set_angle(4500);
+  //  g.rc_6.set_default_dead_zone(80);
+  //  g.rc_6.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
+  //  g.rc_7.set_angle(4500);
+  //  g.rc_7.set_default_dead_zone(80);
+  //  g.rc_7.set_type(RC_CHANNEL_TYPE_ANGLE_RAW);
 
   // Check tilt servo input
   if(g.rc_8.control_in>=800){
@@ -82,40 +86,57 @@ static void stabilize_run()
 
     // output pilot's throttle
     attitude_control.set_throttle_out(pilot_throttle_scaled, true);
-    // set aileron, elevator, and rudder to radio trim positions
-    g.rc_5.servo_out = trim[ail];
-    g.rc_5.calc_pwm();
-    g.rc_5.output();
-    g.rc_6.servo_out = trim[ele];
-    g.rc_6.calc_pwm();
-    g.rc_6.output();
-    g.rc_7.servo_out = trim[rud];
-    g.rc_7.calc_pwm();
-    g.rc_7.output();
 
+    if(loop_count = refresh){
+
+      // set aileron, elevator, and rudder to radio trim positions
+      g.rc_5.servo_out = trim[ail];
+      g.rc_5.calc_pwm();
+      g.rc_5.output();
+      g.rc_6.servo_out = trim[ele];
+      g.rc_6.calc_pwm();
+      g.rc_6.output();
+      g.rc_7.servo_out = trim[rud];
+      g.rc_7.calc_pwm();
+      g.rc_7.output();
+    }
+  }
+
+  else{
+    if(loop_count = refresh){
+      // 8 pulled low: horizontal mode
+
+      // Output roll, pitch, and yaw to ailerons, elevator, and rudder
+      RC_Channel::set_pwm_all();
+      g.rc_5.servo_out = g.rc_1.control_in;
+      g.rc_6.servo_out = g.rc_2.control_in;
+      g.rc_7.servo_out = g.rc_4.control_in;
+      g.rc_5.calc_pwm();
+      g.rc_6.calc_pwm();
+      g.rc_7.calc_pwm();
+      g.rc_5.output();
+      g.rc_6.output();
+      g.rc_7.output();
+      // output pilot's throttle
+      motors.throttle_pass_through();
+      // Pass through tilt servo on CH_8
+      g.rc_8.servo_out = g.rc_8.control_in;
+      g.rc_8.calc_pwm();
+      g.rc_8.output();
+    }
+  }
+  // Reset Counter
+  if(loop_count = refresh){
+    loop_count = 1;
   }
   else{
-    // 8 pulled low: horizontal mode
-
-    // Output roll, pitch, and yaw to ailerons, elevator, and rudder
-    RC_Channel::set_pwm_all();
-    g.rc_5.servo_out = g.rc_1.control_in;
-    g.rc_6.servo_out = g.rc_2.control_in;
-    g.rc_7.servo_out = g.rc_4.control_in;
-    g.rc_5.calc_pwm();
-    g.rc_6.calc_pwm();
-    g.rc_7.calc_pwm();
-    g.rc_5.output();
-    g.rc_6.output();
-    g.rc_7.output();
-    // output pilot's throttle
-    motors.throttle_pass_through();
+    loop_count++;
   }
-  // Pass through tilt servo on CH_8
-  g.rc_8.servo_out = g.rc_8.control_in;
-  g.rc_8.calc_pwm();
-  g.rc_8.output();
 }
+
+
+
+
 
 
 
