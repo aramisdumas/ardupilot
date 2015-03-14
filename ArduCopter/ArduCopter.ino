@@ -166,6 +166,7 @@
 
 // key aircraft parameters passed to multiple libraries
 static AP_Vehicle::MultiCopter aparm;
+static AP_Vehicle::FixedWing aparm1;
 
 // Local modules
 #include "Parameters.h"
@@ -330,6 +331,11 @@ static GCS_MAVLINK gcs[MAVLINK_COMM_NUM_BUFFERS];
 static RangeFinder sonar;
 static bool sonar_enabled = true; // enable user switch for sonar
 #endif
+
+////////////////////////////////////////////////////////////////////////////////
+// Airspeed Sensors
+////////////////////////////////////////////////////////////////////////////////
+AP_Airspeed airspeed(aparm1);
 
 ////////////////////////////////////////////////////////////////////////////////
 // User variables
@@ -1379,6 +1385,7 @@ static void read_AHRS(void)
 
     ahrs.update();
 }
+
 
 // read baro and sonar altitude at 10hz
 static void update_altitude()

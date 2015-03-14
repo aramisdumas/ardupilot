@@ -131,3 +131,22 @@ void read_receiver_rssi(void)
         receiver_rssi = constrain_int16(ret, 0, 255);
     }
 }
+
+/*
+  ask airspeed sensor for a new value
+ */
+static void read_airspeed(void)
+{
+    if (airspeed.enabled()) {
+        airspeed.read();
+        if (should_log(MASK_LOG_IMU)) {
+            Log_Write_Airspeed();
+        }
+    }
+}
+
+static void zero_airspeed(void)
+{
+    airspeed.calibrate();
+    gcs_send_text_P(SEVERITY_LOW,PSTR("zero airspeed calibrated"));
+}
