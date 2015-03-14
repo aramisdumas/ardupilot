@@ -36,7 +36,11 @@ static bool stabilize_init(bool ignore_checks)
   g.rc_7.radio_trim = trim[rud];
   g.rc_7.calc_pwm();
   g.rc_7.output();
-
+  
+  // Set the update rate of CH5 to 50hz
+  uint32_t mask = 0;
+  mask |= 1U << 4;
+  hal.rcout->set_freq(mask,50);
   loop_count = 1;
   // stabilize should never be made to fail
   return true;
@@ -49,7 +53,12 @@ static void stabilize_run()
   int16_t target_roll, target_pitch;
   float target_yaw_rate;
   int16_t pilot_throttle_scaled;
-
+  
+  // Set the update rate of CH5 to 50hz
+  uint32_t mask = 0;
+  mask |= 1U << 4;
+  hal.rcout->set_freq(mask,50);
+  
   // Check tilt servo input
   if(g.rc_8.control_in>=800){
     // if not armed set throttle to zero and exit immediately
