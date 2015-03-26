@@ -11,6 +11,8 @@
 // Value to store trim
 static uint16_t trim[3];
 static uint8_t loop_count;
+static bool vert;
+
 
 // stabilize_init - initialise stabilize controller
 static bool stabilize_init(bool ignore_checks)
@@ -41,7 +43,15 @@ static bool stabilize_init(bool ignore_checks)
   uint32_t mask = 0;
   mask |= 1U << 4;
   hal.rcout->set_freq(mask,50);
+  // Initialize loop counter
   loop_count = 1;
+  // Initial mode boolean
+  if(g.rc_8.control_in>=800){
+    vert = true;
+  }
+  else{
+    vert = false;
+  }
   // stabilize should never be made to fail
   return true;
 }
@@ -59,10 +69,20 @@ static void stabilize_run()
   mask |= 1U << 4;
   hal.rcout->set_freq(mask,50);
 
+  // Check mode switch
+  if(loop_count = refresh){
+    if(g.rc_8.control_in>=800){
+      vert = true;
+    }
+    else{
+      vert = false;
+    }
+  }
+
   // Check tilt servo input
-  if(g.rc_8.control_in>=800){
+  if(vert){
     // if not armed set throttle to zero and exit immediately
-    if(!motors.armed()) {
+    if(!motors.armed() || g.rc_3.control_in <= 0) {
       attitude_control.relax_bf_rate_controller();
       attitude_control.set_yaw_target_to_current_heading();
       attitude_control.set_throttle_out(0, false);
@@ -126,8 +146,18 @@ static void stabilize_run()
       g.rc_8.calc_pwm();
       g.rc_8.output();
     }
-    // output pilot's throttle
-    motors.throttle_pass_through();
+    // Motor Output
+    if(g.rc_3.control_in <= 0) {
+      attitude_control.relax_bf_rate_controller();
+      attitude_control.set_yaw_target_to_current_heading();
+      attitude_control.set_throttle_out(0, false);
+    }
+    else
+    {
+      // output pilot's throttle
+      motors.throttle_pass_through();
+    }
+
   }
   // Reset Counter
   if(loop_count = refresh){
@@ -137,6 +167,11 @@ static void stabilize_run()
     loop_count++;
   }
 }
+
+
+
+
+
 
 
 
