@@ -69,8 +69,26 @@ static void stabilize_run()
   mask |= 1U << 4;
   hal.rcout->set_freq(mask,50);
 
-  // Check mode switch
+  // Check Servos
   if(loop_count = refresh){
+    // Pass through tilt servo on CH_8
+      g.rc_8.servo_out = g.rc_8.control_in;
+      g.rc_8.calc_pwm();
+      g.rc_8.output();
+
+      // Output roll, pitch, and yaw to ailerons, elevator, and rudder
+      RC_Channel::set_pwm_all();
+      g.rc_5.servo_out = g.rc_1.control_in;
+      g.rc_6.servo_out = g.rc_2.control_in;
+      g.rc_7.servo_out = g.rc_4.control_in;
+      g.rc_5.calc_pwm();
+      g.rc_6.calc_pwm();
+      g.rc_7.calc_pwm();
+      g.rc_5.output();
+      g.rc_6.output();
+      g.rc_7.output();
+
+
     if(g.rc_8.control_in>=800){
       vert = true;
     }
@@ -79,7 +97,6 @@ static void stabilize_run()
     }
   }
 
-  // Check tilt servo input
   if(vert){
     // if not armed set throttle to zero and exit immediately
     if(!motors.armed() || g.rc_3.control_in <= 0) {
@@ -126,26 +143,7 @@ static void stabilize_run()
   }
 
   else{
-    if(loop_count = refresh){
-      // 8 pulled low: horizontal mode
-
-      // Output roll, pitch, and yaw to ailerons, elevator, and rudder
-      RC_Channel::set_pwm_all();
-      g.rc_5.servo_out = g.rc_1.control_in;
-      g.rc_6.servo_out = g.rc_2.control_in;
-      g.rc_7.servo_out = g.rc_4.control_in;
-      g.rc_5.calc_pwm();
-      g.rc_6.calc_pwm();
-      g.rc_7.calc_pwm();
-      g.rc_5.output();
-      g.rc_6.output();
-      g.rc_7.output();
-
-      // Pass through tilt servo on CH_8
-      g.rc_8.servo_out = g.rc_8.control_in;
-      g.rc_8.calc_pwm();
-      g.rc_8.output();
-    }
+  // Horizontal Mode
     // Motor Output
     if(g.rc_3.control_in <= 0) {
       attitude_control.relax_bf_rate_controller();
@@ -157,7 +155,6 @@ static void stabilize_run()
       // output pilot's throttle
       motors.throttle_pass_through();
     }
-
   }
   // Reset Counter
   if(loop_count = refresh){
