@@ -127,19 +127,6 @@ static void stabilize_run()
     // output pilot's throttle
     attitude_control.set_throttle_out(pilot_throttle_scaled, true);
 
-    if(loop_count = refresh){
-
-      // set aileron, elevator, and rudder to radio trim positions
-      g.rc_5.servo_out = trim[ail];
-      g.rc_5.calc_pwm();
-      g.rc_5.output();
-      g.rc_6.servo_out = trim[ele];
-      g.rc_6.calc_pwm();
-      g.rc_6.output();
-      g.rc_7.servo_out = trim[rud];
-      g.rc_7.calc_pwm();
-      g.rc_7.output();
-    }
   }
 
   else{
@@ -147,7 +134,15 @@ static void stabilize_run()
     // Motor Output
     attitude_control.relax_bf_rate_controller();
     attitude_control.set_yaw_target_to_current_heading();
-    attitude_control.set_throttle_out(g.rc_3.control_in, false);    
+    motors.set_roll(0);
+    motors.set_pitch(0);
+    motors.set_yaw(0);
+    if(g.rc_3.control_in <= 0) {
+      attitude_control.set_throttle_out(0, false);
+    }
+    else{
+      attitude_control.set_throttle_out(g.rc_3.control_in, false);    
+    }
   }
   // Reset Counter
   if(loop_count = refresh){
@@ -157,6 +152,8 @@ static void stabilize_run()
     loop_count++;
   }
 }
+
+
 
 
 
