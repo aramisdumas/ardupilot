@@ -1149,7 +1149,6 @@ static void fast_loop()
   if(g.rc_8.control_in>=800){
     // run low level rate controllers that only require IMU data
     attitude_control.rate_controller_run();
-
   }
 
 #if FRAME_CONFIG == HELI_FRAME

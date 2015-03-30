@@ -87,16 +87,13 @@ static void stabilize_run()
     g.rc_5.output();
     g.rc_6.output();
     g.rc_7.output();
-
-
-    if(g.rc_8.control_in>=800){
-      vert = true;
-    }
-    else{
-      vert = false;
-    }
   }
-
+  if(g.rc_8.control_in>=800){
+    vert = true;
+  }
+  else{
+    vert = false;
+  }
   if(vert){
     // if not armed set throttle to zero and exit immediately
     if(!motors.armed() || g.rc_3.control_in <= 0) {
@@ -132,17 +129,16 @@ static void stabilize_run()
   else{
     // Horizontal Mode
     // Motor Output
-    attitude_control.relax_bf_rate_controller();
-    attitude_control.set_yaw_target_to_current_heading();
+      attitude_control.relax_bf_rate_controller();
+      attitude_control.set_yaw_target_to_current_heading();
+      attitude_control.set_throttle_out(0, false);
+      return;
+    }
     motors.set_roll(0);
     motors.set_pitch(0);
     motors.set_yaw(0);
-    if(g.rc_3.control_in <= 0) {
-      attitude_control.set_throttle_out(0, false);
-    }
-    else{
-      attitude_control.set_throttle_out(g.rc_3.control_in, false);    
-    }
+    motors.set_throttle(g.rc_3.control_in);    
+
   }
   // Reset Counter
   if(loop_count = refresh){
@@ -152,6 +148,7 @@ static void stabilize_run()
     loop_count++;
   }
 }
+
 
 
 
