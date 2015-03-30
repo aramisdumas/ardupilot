@@ -129,6 +129,7 @@ static void stabilize_run()
   else{
     // Horizontal Mode
     // Motor Output
+    if(!motors.armed()) {
       attitude_control.relax_bf_rate_controller();
       attitude_control.set_yaw_target_to_current_heading();
       attitude_control.set_throttle_out(0, false);
