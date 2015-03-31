@@ -20,24 +20,24 @@ static bool stabilize_init(bool ignore_checks)
   // set target altitude to zero for reporting
   // To-Do: make pos controller aware when it's active/inactive so it can always report the altitude error?
   pos_control.set_alt_target(0);
-  // Store trim values for aileron, elevator, and rudder
-  trim[ail] = g.rc_1.radio_trim;
-  trim[ele] = g.rc_2.radio_trim;
-  trim[rud] = g.rc_4.radio_trim;
-  // set aileron, elevator, and rudder to radio trim positions
-  g.rc_5.control_in = trim[ail];
-  g.rc_5.servo_out = trim[ail];
-  g.rc_5.radio_trim = trim[ail];
-  g.rc_5.calc_pwm();
-  g.rc_5.output();
-  g.rc_6.servo_out = trim[ele];
-  g.rc_6.radio_trim = trim[ele];
-  g.rc_6.calc_pwm();
-  g.rc_6.output();
-  g.rc_7.servo_out = trim[rud];
-  g.rc_7.radio_trim = trim[rud];
-  g.rc_7.calc_pwm();
-  g.rc_7.output();
+//  // Store trim values for aileron, elevator, and rudder
+//  trim[ail] = g.rc_1.radio_trim;
+//  trim[ele] = g.rc_2.radio_trim;
+//  trim[rud] = g.rc_4.radio_trim;
+//  // set aileron, elevator, and rudder to radio trim positions
+//  g.rc_5.control_in = trim[ail];
+//  g.rc_5.servo_out = trim[ail];
+//  g.rc_5.radio_trim = trim[ail];
+//  g.rc_5.calc_pwm();
+//  g.rc_5.output();
+//  g.rc_6.servo_out = trim[ele];
+//  g.rc_6.radio_trim = trim[ele];
+//  g.rc_6.calc_pwm();
+//  g.rc_6.output();
+//  g.rc_7.servo_out = trim[rud];
+//  g.rc_7.radio_trim = trim[rud];
+//  g.rc_7.calc_pwm();
+//  g.rc_7.output();
 
   // Set the update rate of CH5 to 50hz
   uint32_t mask = 0;
@@ -87,6 +87,8 @@ static void stabilize_run()
     g.rc_5.output();
     g.rc_6.output();
     g.rc_7.output();
+    hal.console->printf("%d\n",g.rc_5.radio_out);
+	
   }
   if(g.rc_8.control_in>=800){
     vert = true;
