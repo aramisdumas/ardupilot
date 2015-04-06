@@ -165,6 +165,8 @@ public:
     // user settable parameters
     static const struct AP_Param::GroupInfo var_info[];
 
+	// Method to reset the integrator
+	void reset_I();
 protected:
 
     // attitude control flags

@@ -72,10 +72,14 @@ static void stabilize_run()
   }
   // Detect mode switch
   if(g.rc_8.control_in>=800&&vert==false){
+	  // Switching into vertical mode
     vert = true;
+	attitude_control.reset_I();
   }
   else if(g.rc_8.control_in<800&&vert==true){
+	  // Switching into horizontal mode
     vert = false;
+	attitude_control.reset_I();
   }
   if(vert){
     // if not armed set throttle to zero and exit immediately
@@ -132,7 +136,6 @@ static void stabilize_run()
     loop_count++;
   }
 }
-
 
 
 

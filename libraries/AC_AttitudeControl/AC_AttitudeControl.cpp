@@ -62,6 +62,15 @@ const AP_Param::GroupInfo AC_AttitudeControl::var_info[] PROGMEM = {
 
     AP_GROUPEND
 };
+// Method to reset the integrator
+void AC_AttitudeControl::reset_I()
+{
+	// Reset Integrator
+	_pid_rate_roll.reset_I();
+	_pid_rate_pitch.reset_I();
+	_pid_rate_yaw.reset_I();
+}
+
 
 //
 // high level controllers
