@@ -70,10 +70,11 @@ static void stabilize_run()
     g.rc_6.output();
     g.rc_7.output();
   }
-  if(g.rc_8.control_in>=800){
+  // Detect mode switch
+  if(g.rc_8.control_in>=800&&vert==false){
     vert = true;
   }
-  else{
+  else if(g.rc_8.control_in<800&&vert==true){
     vert = false;
   }
   if(vert){
